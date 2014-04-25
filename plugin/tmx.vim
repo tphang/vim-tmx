@@ -2,10 +2,10 @@
 " Maintainer:   Tim Phang
 " Version:      0.8
 
-" if exists('g:loaded_tmx') || &cp
-"   finish
-" endif
-" let g:loaded_tmx = 1
+if exists('g:loaded_tmx') || &cp
+  finish
+endif
+let g:loaded_tmx = 1
 
 function! tmx#send(command_string)
   if (!exists("s:tmux_target"))
