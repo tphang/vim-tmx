@@ -21,6 +21,7 @@ let s:home = expand("<sfile>:p:h:h")
 let s:rs_formatters = '/plugin/rspec/*_formatter.rb'
 let g:rs_formatter = 'VimQuickfixFormatter'
 let g:rs_command = 'rspec -r '.s:home.s:rs_formatters
+let s:progname = 'mvim'
 
 function! tmx#rspec(...)
   if(a:0)
@@ -28,10 +29,17 @@ function! tmx#rspec(...)
   else
     let l:f = expand('%')
   end
+
   let l:errorfile = tempname()
+
   let l:rs_command = g:rs_command.' '.l:f.' -f '.g:rs_formatter.' -o '.l:errorfile.' -f d'
-  let l:qf_command = 'if [ -s "'.l:errorfile.'" ]; then mvim --servername '.v:servername.' --remote-send ''<ESC>:cg '.l:errorfile.'|copen<CR>'';fi'
-  call tmx#send(l:rs_command. ';'.l:qf_command)
+  let l:qf_command = 'if [ -s "'.l:errorfile.'" ]; then '.s:progname.' --servername '.v:servername.' --remote-send ''<ESC>:cg '.l:errorfile.'|copen<CR>'';fi'
+
+  if(has('clientserver'))
+    let l:rs_command = l:rs_command.';'.l:qf_command
+  end
+
+  call tmx#send(l:rs_command)
 endfunction
 
 command! -nargs=1 -complete=shellcmd TMXSend call tmx#send("<args>")
