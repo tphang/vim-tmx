@@ -34,7 +34,10 @@ function! tmx#cli()
   endif
 
   let l:command = input(l:prmpt, "", "shellcmd")
-  call tmx#send(command)
+
+  if(strlen(l:command) > 0)
+    call tmx#send(command)
+  endif
 endfunction
 
 function! tmx#rspec(...)
