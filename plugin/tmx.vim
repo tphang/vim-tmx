@@ -49,11 +49,11 @@ function! tmx#rspec(...)
 
   let l:errorfile = tempname()
 
-  let l:rs_command = g:rs_command.' '.l:f.' -f '.g:rs_formatter.' -o '.l:errorfile.' -f d'
+  let l:rs_command = g:rs_command.' '.l:f.' -f d'
   let l:qf_command = 'if [ -s "'.l:errorfile.'" ]; then '.g:tmx_vim_progname.' --servername '.v:servername.' --remote-send ''<ESC>:cg '.l:errorfile.'|copen<CR>'';fi'
 
   if(has('clientserver'))
-    let l:rs_command = l:rs_command.';'.l:qf_command
+    let l:rs_command = l:rs_command.' -f '.g:rs_formatter.' -o '.l:errorfile.';'.l:qf_command
   end
 
   call tmx#send(l:rs_command)
