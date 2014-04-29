@@ -1,33 +1,38 @@
+require 'pry'
 require 'rspec/core/formatters/base_text_formatter'
 
 class VimQuickfixFormatter < RSpec::Core::Formatters::BaseTextFormatter
-  def example_failed example
-    exception = example.execution_result[:exception]
-    backtrace = format_backtrace(exception.backtrace, example).first
-    backtrace.match %r{\./(.*\.rb:\d+)(?::|\z)}
-    path = $1
+  # This registers the notifications this formatter supports, and tells
+  # us that this was written against the RSpec 3.x formatter API.
+  RSpec::Core::Formatters.register self, :dump_failures
 
-    message = format_message exception.message
-    path    = format_caller path
-    output.puts "#{path}: [FAIL] #{message}" if path
+  def initialize(output)
+    super(output)
   end
 
-  def example_pending example
-    message = format_message example.execution_result[:pending_message]
-    path    = format_caller example.location
-    output.puts "#{path}: [PEND] #{message}" if path
+  def dump_failures(notification)
+    return if failed_examples.empty?
+    failed_examples.each do |example|
+      dump_failure_info(example) unless pending_fixed?(example)
+    end
   end
 
-  # NOOPs
-  def dump_failures *args; end
-  def dump_pending *args; end
-  def message msg; end
-  def dump_summary *args; end
-  def seed *args; end
+  def dump_failure_info(example)
+    exception = example.exception
+    output.puts "#{relative_path(example.location)}: E: #{example.full_description}"
+    output.puts exception.message.gsub(/^\n/, '')
+  end
+
+  # NoOp
+  def dump_summary(*args); end
+  def seed(*args); end
+  def message(*args); end
+  def dump_pending(*args); end
 
   private
 
-  def format_message msg
-    msg.gsub("\n", ' ')[0,40].squeeze.strip
+
+  def relative_path(path)
+    path.gsub(/^\.\//, '')
   end
 end
