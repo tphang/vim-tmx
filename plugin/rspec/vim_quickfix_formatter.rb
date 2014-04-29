@@ -1,4 +1,3 @@
-require 'pry'
 require 'rspec/core/formatters/base_text_formatter'
 
 class VimQuickfixFormatter < RSpec::Core::Formatters::BaseTextFormatter
@@ -31,7 +30,14 @@ class VimQuickfixFormatter < RSpec::Core::Formatters::BaseTextFormatter
   def dump_failure_info(example)
     exception = example.exception
     output.puts "#{relative_path(example.location)}: E: #{example.full_description}"
-    output.puts exception.message.gsub(/^\n/, '')
+
+    lines = exception.message
+              .gsub(/^\n|\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]/, '')
+              .split("\n")
+              .map { |line| line.length > 128 ? "#{line[0, 125]}..." : line }
+              .compact
+
+    output.puts lines.join("\n    ")
   end
 
   def relative_path(path)
