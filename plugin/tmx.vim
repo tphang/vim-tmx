@@ -42,11 +42,7 @@ function! tmx#cli()
 endfunction
 
 function! tmx#rspec(...)
-  if(a:0)
-    let l:f = a:1
-  else
-    let l:f = expand('%')
-  end
+  let l:f = (a:0) ? a:1 : expand('%')
 
   let l:errorfile = tempname()
 
@@ -61,11 +57,7 @@ function! tmx#rspec(...)
 endfunction
 
 function! tmx#rubocop(...)
-  if(a:0)
-    let l:f = a:1
-  else
-    let l:f = expand('%')
-  end
+  let l:f = (a:0) ? a:1 : expand('%')
 
   let l:errorfile = tempname()
 
