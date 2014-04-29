@@ -11,6 +11,7 @@ let s:home = expand("<sfile>:p:h:h")
 let s:rs_formatters = '/plugin/rspec/*_formatter.rb'
 let g:rs_formatter = 'VimQuickfixFormatter'
 let g:rs_command = 'rspec -r '.s:home.s:rs_formatters
+let g:send_cfile_to_vim_command = s:home.'/plugin/bash/send_cfile_to_vim.sh'
 
 if !exists("g:tmx_vim_progname")
   let g:tmx_vim_progname = v:progname
@@ -50,7 +51,7 @@ function! tmx#rspec(...)
   let l:errorfile = tempname()
 
   let l:rs_command = g:rs_command.' '.l:f.' -f d'
-  let l:qf_command = 'if [ -s "'.l:errorfile.'" ]; then '.g:tmx_vim_progname.' --servername '.v:servername.' --remote-send ''<ESC>:cg '.l:errorfile.'|copen<CR>'';fi'
+  let l:qf_command = g:send_cfile_to_vim_command.' '.g:tmx_vim_progname.' '.v:servername.' '.l:errorfile
 
   if(has('clientserver'))
     let l:rs_command = l:rs_command.' -f '.g:rs_formatter.' -o '.l:errorfile.';'.l:qf_command
