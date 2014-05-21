@@ -10,14 +10,14 @@ class VimQuickfixFormatter < RSpec::Core::Formatters::BaseTextFormatter
   end
 
   def dump_failures(notification)
-    return if failed_examples.empty?
-    failed_examples.each do |example|
+    return if notification.failed_examples.empty?
+    notification.failed_examples.each do |example|
       dump_failure_info(example) unless pending_fixed?(example)
     end
   end
 
   def dump_summary(summary)
-    output.puts "\n#{summary.summary_line}"
+    output.puts "\n#{summary.totals_line}"
   end
 
   # NoOp
