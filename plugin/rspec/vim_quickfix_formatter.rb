@@ -12,7 +12,7 @@ class VimQuickfixFormatter < RSpec::Core::Formatters::BaseTextFormatter
   def dump_failures(notification)
     return if notification.failed_examples.empty?
     notification.failed_examples.each do |example|
-      dump_failure_info(example) unless pending_fixed?(example)
+      dump_failure_info(example)
     end
   end
 
